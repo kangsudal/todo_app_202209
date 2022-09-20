@@ -14,6 +14,7 @@ class TodoListPage extends StatefulWidget {
 class _TodoListPageState extends State<TodoListPage> {
   bool isLoading = true;
   List items = [];
+
   @override
   void initState() {
     super.initState();
@@ -28,7 +29,9 @@ class _TodoListPageState extends State<TodoListPage> {
       ),
       body: Visibility(
         visible: isLoading,
-        child: Center(child: CircularProgressIndicator(),),
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
         replacement: RefreshIndicator(
           onRefresh: fetchTodo,
           child: ListView.builder(
@@ -36,9 +39,15 @@ class _TodoListPageState extends State<TodoListPage> {
               itemBuilder: (context, index) {
                 final item = items[index] as Map;
                 return ListTile(
-                  leading: CircleAvatar(child: Text('${index+1}')),
+                  leading: CircleAvatar(child: Text('${index + 1}')),
                   title: Text(item['title']),
                   subtitle: Text(item['description']),
+                  trailing: PopupMenuButton(itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(child: Text('Edit')),
+                      PopupMenuItem(child: Text('Delete')),
+                    ];
+                  }),
                 );
               }),
         ),
