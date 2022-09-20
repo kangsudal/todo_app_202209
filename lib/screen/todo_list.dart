@@ -47,6 +47,7 @@ class _TodoListPageState extends State<TodoListPage> {
                     onSelected: (value) {
                       if (value == 'edit') {
                         //Open edit page
+                        navigateToEditPage(item);
                       } else if (value == 'delete') {
                         //Delete and remove the item
                         deleteById(id);
@@ -74,13 +75,32 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  void navigateToAddPage() {
+  Future<void> navigateToAddPage() async {
     final route = MaterialPageRoute(
       builder: (context) {
         return AddTodoPage();
       },
     );
-    Navigator.push(context, route);
+    await Navigator.push(context, route);
+    setState(() {
+      isLoading = true;
+    });
+    fetchTodo();
+  }
+
+  Future<void> navigateToEditPage(Map item) async {
+    final route = MaterialPageRoute(
+      builder: (context) {
+        return AddTodoPage(
+          todo: item,
+        );
+      },
+    );
+    await Navigator.push(context, route);
+    setState(() {
+      isLoading = true;
+    });
+    fetchTodo();
   }
 
   Future<void> fetchTodo() async {
@@ -105,7 +125,7 @@ class _TodoListPageState extends State<TodoListPage> {
     //delete the item
     final url = 'https://api.nstack.in/v1/todos/$id';
     final uri = Uri.parse(url);
-    final response = await http.get(uri);
+    final response = await http.delete(uri);
     //remove item from the list
     if (response.statusCode == 200) {
       final filtered = items.where((element) => element['_id'] != id).toList();
