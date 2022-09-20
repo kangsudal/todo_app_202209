@@ -38,16 +38,33 @@ class _TodoListPageState extends State<TodoListPage> {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index] as Map;
+                final id = item['_id'] as String;
                 return ListTile(
                   leading: CircleAvatar(child: Text('${index + 1}')),
                   title: Text(item['title']),
                   subtitle: Text(item['description']),
-                  trailing: PopupMenuButton(itemBuilder: (context) {
-                    return [
-                      PopupMenuItem(child: Text('Edit')),
-                      PopupMenuItem(child: Text('Delete')),
-                    ];
-                  }),
+                  trailing: PopupMenuButton(
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        //Open edit page
+                      } else if (value == 'delete') {
+                        //Delete and remove the item
+                        deleteById(id);
+                      }
+                    },
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          child: Text('Edit'),
+                          value: 'edit',
+                        ),
+                        PopupMenuItem(
+                          child: Text('Delete'),
+                          value: 'delete',
+                        ),
+                      ];
+                    },
+                  ),
                 );
               }),
         ),
@@ -82,5 +99,42 @@ class _TodoListPageState extends State<TodoListPage> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> deleteById(String id) async {
+    //delete the item
+    final url = 'https://api.nstack.in/v1/todos/$id';
+    final uri = Uri.parse(url);
+    final response = await http.get(uri);
+    //remove item from the list
+    if (response.statusCode == 200) {
+      final filtered = items.where((element) => element['_id'] != id).toList();
+      setState(() {
+        items = filtered;
+      });
+    } else {
+      //show error
+      showErrorMessage('Delete Failed');
+      print(response.statusCode);
+    }
+  }
+
+  void showSuccessMessage(String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.white,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void showErrorMessage(String message) {
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.redAccent,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
