@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:todo_app_202209/service/todo_service.dart';
 import 'package:todo_app_202209/utility/snackbar_helper.dart';
 
 class AddTodoPage extends StatefulWidget {
@@ -82,18 +83,12 @@ class _AddTodoPageState extends State<AddTodoPage> {
       "is_completed": false
     };
     //submit updated data to the server
-    var url = Uri.https('api.nstack.in', 'v1/todos/$id');
-    var response = await http.put(
-      url,
-      body: jsonEncode(body),
-      headers: {'Content-Type': 'application/json'},
-    );
+    var isSuccess = await TodoService.updateTodo(id, body);
     //show success or fail based on status
-    if (response.statusCode == 200) {
+    if (isSuccess) {
       showSuccessMessage(context, message: 'updating success');
     } else {
       showErrorMessage(context, message: 'updating fail');
-      print('Response body: ${response.body}');
     }
   }
 
@@ -107,15 +102,10 @@ class _AddTodoPageState extends State<AddTodoPage> {
       "is_completed": false
     };
     //submit data to the server
-    var url = Uri.https('api.nstack.in', 'v1/todos');
-    var response = await http.post(
-      url,
-      body: jsonEncode(body),
-      headers: {'Content-Type': 'application/json'},
-    );
-    //show success or fail based on status
+    var isSuccess = await TodoService.addTodo(body);
 
-    if (response.statusCode == 201) {
+    //show success or fail based on status
+    if (isSuccess) {
       titleController.text = '';
       descriptionController.text = '';
       showSuccessMessage(context, message: 'creation success');

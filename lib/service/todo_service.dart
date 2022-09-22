@@ -20,8 +20,28 @@ class TodoService {
       final json = jsonDecode(response.body) as Map;
       final result = json['items'] as List;
       return result;
-    }else{
+    } else {
       return null;
     }
+  }
+
+  static Future<bool> updateTodo(String id, Map body) async {
+    var url = Uri.https('api.nstack.in', 'v1/todos/$id');
+    var response = await http.put(
+      url,
+      body: jsonEncode(body),
+      headers: {'Content-Type': 'application/json'},
+    );
+    return response.statusCode == 200;
+  }
+
+  static Future<bool> addTodo(Map body) async {
+    var url = Uri.https('api.nstack.in', 'v1/todos');
+    var response = await http.post(
+      url,
+      body: jsonEncode(body),
+      headers: {'Content-Type': 'application/json'},
+    );
+    return response.statusCode == 201;
   }
 }
