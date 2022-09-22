@@ -5,6 +5,7 @@ import 'package:todo_app_202209/screen/add_todo.dart';
 import 'package:http/http.dart' as http;
 import 'package:todo_app_202209/service/todo_service.dart';
 import 'package:todo_app_202209/utility/snackbar_helper.dart';
+import 'package:todo_app_202209/widget/todo_card.dart';
 
 class TodoListPage extends StatefulWidget {
   const TodoListPage({Key? key}) : super(key: key);
@@ -50,42 +51,19 @@ class _TodoListPageState extends State<TodoListPage> {
                 itemBuilder: (context, index) {
                   final item = items[index] as Map;
                   final id = item['_id'] as String;
-                  return Card(
-                    child: ListTile(
-                      leading: CircleAvatar(child: Text('${index + 1}')),
-                      title: Text(item['title']),
-                      subtitle: Text(item['description']),
-                      trailing: PopupMenuButton(
-                        onSelected: (value) {
-                          if (value == 'edit') {
-                            //Open edit page
-                            navigateToEditPage(item);
-                          } else if (value == 'delete') {
-                            //Delete and remove the item
-                            deleteById(id);
-                          }
-                        },
-                        itemBuilder: (context) {
-                          return [
-                            PopupMenuItem(
-                              child: Text('Edit'),
-                              value: 'edit',
-                            ),
-                            PopupMenuItem(
-                              child: Text('Delete'),
-                              value: 'delete',
-                            ),
-                          ];
-                        },
-                      ),
-                    ),
-                  );
+                  return TodoCard(
+                      item: item,
+                      index: index,
+                      navigateToEditPage: navigateToEditPage,
+                      deleteById: deleteById);
                 }),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: navigateToAddPage, label: Text('Add Todo')),
+        onPressed: navigateToAddPage,
+        label: Text('Add Todo'),
+      ),
     );
   }
 
