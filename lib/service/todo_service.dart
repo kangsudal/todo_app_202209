@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class TodoService {
+  //DELETE
   static Future<bool> deleteById(String id) async {
     //delete the item
     final url = 'https://api.nstack.in/v1/todos/$id';
@@ -12,6 +13,7 @@ class TodoService {
     return response.statusCode == 200;
   }
 
+  //GET(READ)
   static Future<List?> fetchTodo() async {
     final url = "https://api.nstack.in/v1/todos?page=1&limit=10";
     final uri = Uri.parse(url);
@@ -25,6 +27,7 @@ class TodoService {
     }
   }
 
+  //PUT(UPDATE)
   static Future<bool> updateTodo(String id, Map body) async {
     var url = Uri.https('api.nstack.in', 'v1/todos/$id');
     var response = await http.put(
@@ -35,6 +38,7 @@ class TodoService {
     return response.statusCode == 200;
   }
 
+  //POST(CREATE)
   static Future<bool> addTodo(Map body) async {
     var url = Uri.https('api.nstack.in', 'v1/todos');
     var response = await http.post(

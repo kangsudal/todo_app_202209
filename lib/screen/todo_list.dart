@@ -1,8 +1,6 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:todo_app_202209/screen/add_todo.dart';
-import 'package:http/http.dart' as http;
 import 'package:todo_app_202209/service/todo_service.dart';
 import 'package:todo_app_202209/utility/snackbar_helper.dart';
 import 'package:todo_app_202209/widget/todo_card.dart';

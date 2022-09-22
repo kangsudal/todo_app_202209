@@ -1,7 +1,5 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:todo_app_202209/service/todo_service.dart';
 import 'package:todo_app_202209/utility/snackbar_helper.dart';
 
@@ -74,14 +72,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
       return;
     }
     final id = todo['_id'];
-    //get the data from form
-    final title = titleController.text;
-    final description = descriptionController.text;
-    final body = {
-      "title": title,
-      "description": description,
-      "is_completed": false
-    };
     //submit updated data to the server
     var isSuccess = await TodoService.updateTodo(id, body);
     //show success or fail based on status
@@ -93,14 +83,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
   }
 
   Future<void> submitData() async {
-    //get the data from form
-    final title = titleController.text;
-    final description = descriptionController.text;
-    final body = {
-      "title": title,
-      "description": description,
-      "is_completed": false
-    };
     //submit data to the server
     var isSuccess = await TodoService.addTodo(body);
 
@@ -111,7 +93,17 @@ class _AddTodoPageState extends State<AddTodoPage> {
       showSuccessMessage(context, message: 'creation success');
     } else {
       showErrorMessage(context, message: 'creation fail');
-      print('Response body: ${response.body}');
     }
+  }
+
+  Map get body{
+    //get the data from form
+    final title = titleController.text;
+    final description = descriptionController.text;
+    return {
+      "title": title,
+      "description": description,
+      "is_completed": false
+    };
   }
 }
