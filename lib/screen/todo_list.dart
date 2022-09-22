@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:todo_app_202209/screen/add_todo.dart';
 import 'package:http/http.dart' as http;
+import 'package:todo_app_202209/service/todo_service.dart';
 
 class TodoListPage extends StatefulWidget {
   const TodoListPage({Key? key}) : super(key: key);
@@ -116,17 +117,14 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   Future<void> fetchTodo() async {
-    final url = "https://api.nstack.in/v1/todos?page=1&limit=10";
-    final uri = Uri.parse(url);
-    final response = await http.get(uri);
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body) as Map;
-      final result = json['items'] as List;
+    final result = await TodoService.fetchTodo();
+    if (result != null) {
       setState(() {
         items = result;
       });
     } else {
       //error
+      showErrorMessage('something went wrong');
     }
     setState(() {
       isLoading = false;
@@ -134,12 +132,10 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   Future<void> deleteById(String id) async {
-    //delete the item
-    final url = 'https://api.nstack.in/v1/todos/$id';
-    final uri = Uri.parse(url);
-    final response = await http.delete(uri);
+    //delete the item api가 잘 작동했다면 (status code가 200이면)
+    final isSuccess = await TodoService.deleteById(id);
     //remove item from the list
-    if (response.statusCode == 200) {
+    if (isSuccess) {
       final filtered = items.where((element) => element['_id'] != id).toList();
       setState(() {
         items = filtered;
@@ -147,7 +143,6 @@ class _TodoListPageState extends State<TodoListPage> {
     } else {
       //show error
       showErrorMessage('Delete Failed');
-      print(response.statusCode);
     }
   }
 
