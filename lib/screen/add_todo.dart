@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:todo_app_202209/utility/snackbar_helper.dart';
 
 class AddTodoPage extends StatefulWidget {
   final Map? todo;
@@ -89,9 +90,9 @@ class _AddTodoPageState extends State<AddTodoPage> {
     );
     //show success or fail based on status
     if (response.statusCode == 200) {
-      showSuccessMessage('updating success');
+      showSuccessMessage(context, message: 'updating success');
     } else {
-      showErrorMessage('updating fail');
+      showErrorMessage(context, message: 'updating fail');
       print('Response body: ${response.body}');
     }
   }
@@ -117,29 +118,10 @@ class _AddTodoPageState extends State<AddTodoPage> {
     if (response.statusCode == 201) {
       titleController.text = '';
       descriptionController.text = '';
-      showSuccessMessage('creation success');
+      showSuccessMessage(context, message: 'creation success');
     } else {
-      showErrorMessage('creation fail');
+      showErrorMessage(context, message: 'creation fail');
       print('Response body: ${response.body}');
     }
-  }
-
-  void showSuccessMessage(String message) {
-    final snackBar = SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.white,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  void showErrorMessage(String message) {
-    final snackBar = SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(color: Colors.white),
-      ),
-      backgroundColor: Colors.redAccent,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
